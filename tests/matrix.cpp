@@ -22,15 +22,6 @@ SCENARIO("matrix operator+","[oper+]"){
 	REQUIRE((A+B).getelem(0, 0) == 10);
 }
 
-SCENARIO("matrix operator-","[oper-]"){
-    std::fstream fileA, fileB;
-	CMatrix A, B;
-	fileA.open("A.txt");
-	fileB.open("B.txt");
-	A >> fileA;
-	B >> fileB;
-    REQUIRE((A-B).getelem(0, 0) == -8);
-}
 
 SCENARIO("matrix operator*", "[oper*]") {
     std::fstream fileA, fileB;
