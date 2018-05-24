@@ -6,8 +6,8 @@ CMatrix::CMatrix() {
     space = nullptr;
 }
 int CMatrix::getelem(const int a, const int b) const{
-	if (i < heidht && j < width) {
-        return arr[i][j];
+	if (a < height && b < width) {
+        return space[a][b];
     }else{
         return 1;
 	}
