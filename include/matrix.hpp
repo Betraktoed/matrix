@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include<cassert>
 using namespace std;
 class CMatrix {
 private:
@@ -18,11 +19,12 @@ public:
     CMatrix();
     CMatrix(const CMatrix& M);
     CMatrix(unsigned int n, unsigned int m);
+	CMatrix(unsigned int n, unsigned int m, int **arr);
     ~CMatrix();
 	int getHeight() const {return height;};
 	int getWidth() const {return width;};
 	int getelem(const int a, const int b) const;
-    void operator>>(std::fstream &file);
+    bool operator>>(std::fstream &file);
     std::ostream& operator<<(std::ostream &output) const;
 
     CMatrix& operator=(const CMatrix& M);

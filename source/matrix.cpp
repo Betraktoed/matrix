@@ -1,85 +1,68 @@
 #include <iostream>
 #include "matrix.hpp"
+
 CMatrix::CMatrix() {
     height = width = 0;
-    space = NULL;
+    space = nullptr;
 }
 int CMatrix::getelem(const int a, const int b) const{
-	return space[a][b];
+	if (i < heidht && j < width) {
+        return arr[i][j];
+    }else{
+        return 1;
+	}
 }
-CMatrix::CMatrix(const CMatrix& M) {
+CMatrix::CMatrix(const CMatrix& M) : CMatrix() {
     if ( M.height && M.width ) {
-        unsigned int i, j;
 
         height = M.height;
         width = M.width;
         space = new int*[height];
 
-        for(i = 0; i < height; i++) {
+        for(unsigned int i = 0; i < height; i++) {
             space[i] = new int[width];
 
-            for(j = 0; j < width; j++)
+            for(unsigned int j = 0; j < width; j++)
                 space[i][j] = M.space[i][j];
         }
-    } else {
-        height = 0;
-        width = 0;
-        space = NULL;
     }
 }
 
-CMatrix::CMatrix(unsigned int n, unsigned int m) {
+CMatrix::CMatrix(unsigned int n, unsigned int m, int **arr) : CMatrix(){
+	height = n;
+	width = m;
+	space = arr;
+}
+
+CMatrix::CMatrix(unsigned int n, unsigned int m) : CMatrix() {
     if ( n && m ) {
-        unsigned int i, j;
+
 
         height = n;
         width = m;
         space = new int*[n];
 
-        for(i = 0; i < n; i++) {
+        for(unsigned int i = 0; i < n; i++) {
             space[i] = new int[m];
 
-            for(j = 0; j < m; j++)
+            for(unsigned int j = 0; j < m; j++)
                 space[i][j] = 0;
         }
-    } else {
-        height = 0;
-        width = 0;
-        space = NULL;
-    }
+    } 
 }
 
 CMatrix::~CMatrix() {
-    for(unsigned int i = 0; i < height; i++)
+    for(unsigned int i = 0; i < height; i++) {
         delete space[i];
-
+	}
     delete space;
 }
 
 CMatrix& CMatrix::operator=(const CMatrix& M) {
-    for(unsigned int i = 0; i < height; i++)
-        delete space[i];
 
-    delete space;
-
-    if ( M.height && M.width ) {
-        unsigned int i, j;
-
-        height = M.height;
-        width = M.width;
-        space = new int*[height];
-
-        for(i = 0; i < height; i++) {
-            space[i] = new int[width];
-
-            for(j = 0; j < width; j++)
-                space[i][j] = M.space[i][j];
-        }
-    } else {
-        height = 0;
-        width = 0;
-        space = NULL;
-    }
+	if (this != &M){    
+		CMatrix(M).swap(*this);
+	}
 
     return *this;
 }
@@ -98,24 +81,24 @@ bool CMatrix::operator==(const CMatrix& M) const {
 	}else{
 		return false;
 	}
+	return true;
 }
 
 CMatrix CMatrix::operator+(const CMatrix& M) const {
+
+    assert ( height == M.height && width == M.width );
+
     CMatrix res;
+	res.height = M.height;
+    res.width = M.width;
+    res.space = new int*[res.height];
+    unsigned int i, j;
 
-    if ( height == M.height && width == M.width ) {
-        unsigned int i, j;
+    for(i = 0; i < res.height; i++) {
+        res.space[i] = new int[res.width];
 
-        res.height = M.height;
-        res.width = M.width;
-        res.space = new int*[res.height];
-
-        for(i = 0; i < res.height; i++) {
-            res.space[i] = new int[res.width];
-
-            for(j = 0; j < res.width; j++)
-                res.space[i][j] = space[i][j] + M.space[i][j];
-        }
+        for(j = 0; j < res.width; j++)
+            res.space[i][j] = space[i][j] + M.space[i][j];
     }
 
     return res;
@@ -132,7 +115,7 @@ CMatrix CMatrix::operator*(const CMatrix& M) const {
         res.space = new int*[res.height];
 
         for(i = 0; i < res.height; i++) {
-            res.space[i] = new int[res.width];
+            res.space[i] = new int[res.width]{};
 
             for(j = 0; j < res.width; j++)
                 for(k = 0, res.space[i][j] = 0; k < M.height; k++)
@@ -143,28 +126,35 @@ CMatrix CMatrix::operator*(const CMatrix& M) const {
     return res;
 }
 
-void CMatrix::operator>>(std::fstream &file) {
+bool CMatrix::operator>>(std::fstream &file) {
     for(unsigned int i = 0; i < height; i++)
         delete space[i];
 
     delete space;
 
-    file >> height >> width;
-    space = new int*[height];
+	unsigned int new_width;
+	unsigned int new_height;
 
-    if ( height && width ) {
-        unsigned int i, j;
+    if( file >> new_height >> new_width ) {
+		int ** new_data = new int *[new_height];
+		bool success = true;
+		for( unsigned int i = 0; success && i < new_height; ++i ) {
+			new_data[i] = new int[new_width];
+			for( unsigned int j = 0; j < new_width; ++j ) {
+				if( !(file >> new_data[i][j]) ) {
+					success = false;
+					break;
+				}
+			}	
+		}
+		
+		if( success ) {
+			CMatrix( new_height, new_width, new_data ).swap( *this );
+			return true;
+		}
+	}
 
-        for(i = 0; i < height; i++) {
-            space[i] = new int[width];
-
-            for(j = 0; j < width; j++)
-                file >> space[i][j];
-        }
-    } else {
-        height = width = 0;
-        space = NULL;
-    }
+	return false;
 }
 
 std::ostream& CMatrix::operator<<(std::ostream &output) const {

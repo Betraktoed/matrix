@@ -20,7 +20,7 @@ SCENARIO("matrix operator+","[oper+]"){
 	A >> fileA;
 	B >> fileB;
 	C = A + B;
-	REQUIRE(C.getelem(0, 0) == 10);
+	REQUIRE(C.getelem(0, 0) == 2);
 }
 
 
@@ -32,7 +32,7 @@ SCENARIO("matrix operator*", "[oper*]") {
 	A >> fileA;
 	B >> fileB;
 	C = A*B;
-    REQUIRE(C.getelem(0, 0) == 136);
+    REQUIRE(C.getelem(0, 0) == 27);
 }
 
 SCENARIO("matrix operator==" , "[oper==]") {
