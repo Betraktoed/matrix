@@ -14,23 +14,25 @@ SCENARIO("matrix new with params","[new with params]"){
 
 SCENARIO("matrix operator+","[oper+]"){
     std::fstream fileA, fileB;
-	CMatrix A, B;
+	CMatrix A, B, C;
 	fileA.open("A.txt");
 	fileB.open("B.txt");
 	A >> fileA;
 	B >> fileB;
-	REQUIRE((A+B).getelem(0, 0) == 10);
+	C = A + B;
+	REQUIRE(C.getelem(0, 0) == 10);
 }
 
 
 SCENARIO("matrix operator*", "[oper*]") {
     std::fstream fileA, fileB;
-	CMatrix A, B;
+	CMatrix A, B, C;
 	fileA.open("A.txt");
 	fileB.open("B.txt");
 	A >> fileA;
 	B >> fileB;
-    REQUIRE((A*B).getelem(0, 0) == 136);
+	C = A*B;
+    REQUIRE(C.getelem(0, 0) == 136);
 }
 
 SCENARIO("matrix operator==" , "[oper==]") {
